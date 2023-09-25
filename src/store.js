@@ -134,7 +134,7 @@ let currentState = proxy({
     face:state.items.face["face1"],
     body:state.items.body['sweatshirt'],
     legs:state.items.legs['pants1'],
-    shoe:state.items.shoe['shoe4'],
+    shoe:state.items.shoe['shoe6'],
     skin:state.items.skin['skin3'],
 })
 

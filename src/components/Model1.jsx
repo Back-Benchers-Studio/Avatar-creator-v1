@@ -7,7 +7,7 @@ import { OrbitControls } from '@react-three/drei'
 import { PresentationControls } from '@react-three/drei'
 import { currentState } from '../store'
 import { mergeGLBFiles } from './downloader'
-import { Downloader } from './downloader'
+
 export function Model(props) {
   let snap = useSnapshot(currentState)
   let group = useRef()
@@ -16,7 +16,6 @@ export function Model(props) {
   let leg = useGLTF(snap.legs.model)
   let shoe = useGLTF(snap.shoe.model)
   let skin = useGLTF(snap.skin.model)
-
   return (
     <>
      <PresentationControls speed={2.5} snap={true} polar={[0,Math.PI/3]}>
@@ -28,7 +27,6 @@ export function Model(props) {
         <primitive castShadow object={skin.scene}/>
       </group>
       </PresentationControls>
-      <Downloader model={group}/>
     </>
   )
 }
