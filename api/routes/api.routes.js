@@ -1,13 +1,27 @@
 const express = require('express')
 const router = express.Router()
-
+const multer  = require('multer')
+const upload = multer({ dest: 'uploads/' })
 
 const {
-    UploadDrive,
+    SaveModel,
+    GetAllModelsOfClass,
+    GetModelDataByID,
+
 } = require('../controllers/drive.controller')
 
-router.post('/api/drive-upload', UploadDrive)
+const{
+    PublishCharacter,
+    GetCharacterByID,
+} = require('../controllers/character.controller')
 
-console.log("api.routes.js loaded")
+
+// router.post('/api/savemodel', SaveModel)
+router.post('/api/getclassmodels', GetAllModelsOfClass)
+router.post('/api/getmodel', GetModelDataByID)
+router.post('/api/publishcharacter', PublishCharacter)
+router.post('/api/character/', GetCharacterByID)
+
+
 
 module.exports = router

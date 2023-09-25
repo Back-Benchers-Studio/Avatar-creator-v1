@@ -130,6 +130,8 @@ const state = proxy({
         }
 })
 
+
+
 let currentState = proxy({
     face:state.items.face["face1"],
     body:state.items.body['sweatshirt'],

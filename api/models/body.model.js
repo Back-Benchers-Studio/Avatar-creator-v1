@@ -18,4 +18,4 @@ bodySchema.methods.toJSON = function () {
 };
 module.exports = mongoose.model("body", bodySchema);;
 
-console.log("body.model.js loaded");
+

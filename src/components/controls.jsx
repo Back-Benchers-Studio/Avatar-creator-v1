@@ -8,10 +8,51 @@ import { useSnapshot } from 'valtio'
 import { Billboard ,Text} from '@react-three/drei'
 import { ResizableBox } from 'react-resizable'
 import { PresentationControls } from '@react-three/drei'
+
+import {SaveModel,PublishCharacter,GetModelDataByID} from '../services/services'
+
 let SideBar = (props)=>{
 let [type,setType] = useState('face')
     return(
         <>
+
+        <input type="file" onChange={(e)=>{console.log(e.files)}}/>
+
+        <button onClick={()=>GetModelDataByID({"modelid":"1yJT-6V6Fh3u8ZdAPIQDtTwoCVRz4xoJu"}).then((res)=>{
+
+            const blob = new Blob([res], { type: 'application/octet-stream' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'file.txt'; // You can set the desired filename here
+            // document.body.appendChild(a);
+            // a.click();
+
+            // console.log(url);
+            // if(res.error === false){
+
+
+            // const blob = new Blob([res.ModelData], { type: 'model/gltf-binary' });
+            // const blobUrl = URL.createObjectURL(blob);
+
+            // console.log(blobUrl);
+            // }
+
+        })
+
+        }>test</button>
+
+        <button onClick={()=>PublishCharacter({
+            "face":currentState['face'],
+            "legs":currentState['legs'],
+            "body":currentState['body'],
+            "shoe":currentState['shoe'],
+            "skin":currentState['skin']
+        }).then((res)=>{
+            console.log(`link is: http://localhost:3000/?character=${res.link}`);
+        })}>PublishCharacter</button>
+        {/* <button onClick={()=>PublishCharacter({"modelid":"1yJT-6V6Fh3u8ZdAPIQDtTwoCVRz4xoJu"})}>test2</button> */}
+
         <div className='cont'>
         <div class="side-right" >
             <div class="con-right">
@@ -25,6 +66,7 @@ let [type,setType] = useState('face')
                         </g>
                     </svg>
                 </div>
+                
                 <div className='itemsCont' onClick={()=>setType('face')}>
                     <svg class="h-8 w-8 lg:h-10 lg:w-10 xl:h-12 xl:w-12 z-0 CustomizationIcons_customizationIcon__qHkrK" width="32"
                         height="38" viewBox="0 0 32 38" xmlns="http://www.w3.org/2000/svg">
