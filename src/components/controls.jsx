@@ -2,57 +2,41 @@ import '../sideBar.css'
 import Scene from './scene'
 import { currentState, state } from '../store'
 import { Canvas } from '@react-three/fiber'
-import { Gltf } from '@react-three/drei'
+import { Gltf, Tube } from '@react-three/drei'
 import { Suspense, useEffect, useState } from 'react'
 import { useSnapshot } from 'valtio'
 import { Billboard ,Text} from '@react-three/drei'
 import { ResizableBox } from 'react-resizable'
 import { PresentationControls } from '@react-three/drei'
-
+import { GetCharacterByID } from '../services/services'
 import {SaveModel,PublishCharacter,GetModelDataByID} from '../services/services'
-
+import { Popup } from './popup'
 let SideBar = (props)=>{
 let [type,setType] = useState('face')
+let snap = useSnapshot(state)
+const [open, setOpen] = useState(false);
+const [text,setText] = useState('')
+useEffect(()=>{
+    const queryString = window.location.search;
+    const urlParams = new URLSearchParams(queryString);
+    const character = urlParams.get('character')
+    if(character){
+      // We should update UI here
+       GetCharacterByID({"id":character}).then((res)=>{
+        currentState['face'] = snap.items['face'][res.data.face.name]
+        currentState['body'] = snap.items['body'][res.data.body.name]
+        currentState['legs'] = snap.items['legs'][res.data.legs.name]
+        currentState['shoe'] = snap.items['shoe'][res.data.shoe.name]
+        currentState['skin'] = snap.items['skin'][res.data.skin.name]
+
+      })
+    }
+  },[])
     return(
-        <>
-
-        <input type="file" onChange={(e)=>{console.log(e.files)}}/>
-
-        <button onClick={()=>GetModelDataByID({"modelid":"1yJT-6V6Fh3u8ZdAPIQDtTwoCVRz4xoJu"}).then((res)=>{
-
-            const blob = new Blob([res], { type: 'application/octet-stream' });
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'file.txt'; // You can set the desired filename here
-            // document.body.appendChild(a);
-            // a.click();
-
-            // console.log(url);
-            // if(res.error === false){
-
-
-            // const blob = new Blob([res.ModelData], { type: 'model/gltf-binary' });
-            // const blobUrl = URL.createObjectURL(blob);
-
-            // console.log(blobUrl);
-            // }
-
-        })
-
-        }>test</button>
-
-        <button onClick={()=>PublishCharacter({
-            "face":currentState['face'],
-            "legs":currentState['legs'],
-            "body":currentState['body'],
-            "shoe":currentState['shoe'],
-            "skin":currentState['skin']
-        }).then((res)=>{
-            console.log(`link is: http://localhost:3000/?character=${res.link}`);
-        })}>PublishCharacter</button>
-        {/* <button onClick={()=>PublishCharacter({"modelid":"1yJT-6V6Fh3u8ZdAPIQDtTwoCVRz4xoJu"})}>test2</button> */}
-
+        <>   
+        {
+            open&&<Popup closePopup={()=>setOpen(false)} title={'take your link'} text={text}/>
+        }
         <div className='cont'>
         <div class="side-right" >
             <div class="con-right">
@@ -246,14 +230,32 @@ let [type,setType] = useState('face')
         </div>
             <LeftSide item={type}/>
         <div className='scene'>
+                <button style={{zIndex:30,height:'50px',background:'#162333',position:'absolute',bottom:'2%',left:'2%'}} 
+                onClick={
+                    ()=>{
+                        setOpen(true)
+                PublishCharacter({
+                    "face":currentState['face'],
+                    "legs":currentState['legs'],
+                    "body":currentState['body'],
+                    "shoe":currentState['shoe'],
+                    "skin":currentState['skin']
+                }).then((res)=>{
+                    console.log(`link is: ${window.location.host}/?character=${res.link}`);
+                        setText(`${window.location.host}/?character=${res.link}`)
+                        setOpen(true)
+                })
+            }}>PublishCharacter</button>
                 <Scene/>
             </div>
         </div>
     </>
     )
 }
+
 const LeftSide = ({item})=>{
     // item = 'skin'
+    
     let snap = useSnapshot(state)
     return(<>
          <div class="side-left">
@@ -302,6 +304,7 @@ let SmallCanvas = (props)=>{
     },[props,loaded])
     return(
         <>
+        
             <Canvas camera={{fov: 30 }}>
                 <Suspense fallback={<Loading />}>
                     <ambientLight intensity={0.2}></ambientLight>
@@ -312,4 +315,14 @@ let SmallCanvas = (props)=>{
         </>
     )
 }
+
+// const App = () => {
+//   const [open, setOpen] = useState(false);
+//   return (
+//    <div>
+//     <button onClick={() => setOpen(true)}> Click to Open       Popup</button>
+// {open ? <Popup text="Hello there!" closePopup={() => setOpen(false)} /> : null}
+//    </div>
+//  );
+// };
 export default SideBar

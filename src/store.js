@@ -4,7 +4,7 @@ const state = proxy({
             face:{
                 'face1':{
                     'skin':'skin3',
-                    "name":"fac1",
+                    "name":"face1",
                     "model":'models/face/face1.glb',
                 },
                 'face2':{
@@ -31,7 +31,7 @@ const state = proxy({
             },
             body:{
                 't-shirt':{
-                    "name":"shirt",
+                    "name":"t-shirt",
                     'model':'models/bodys/body1.glb'
                 },
                 'sweatshirt':{
@@ -39,23 +39,23 @@ const state = proxy({
                     'model':'models/bodys/body2.glb'
                 },
                 'sweatshirt2':{
-                    "name":"sweatshirt",
+                    "name":"sweatshirt2",
                     'model':'models/bodys/body3.glb'
                 },
                 'sweatshirt3':{
-                    "name":"sweatshirt",
+                    "name":"sweatshirt3",
                     'model':'models/bodys/body4.glb'
                 },
                 'sweatshirt4':{
-                    "name":"sweatshirt",
+                    "name":"sweatshirt4",
                     'model':'models/bodys/body6.glb'
                 },
                 'sweatshirt5':{
-                    "name":"sweatshirt",
+                    "name":"sweatshirt5",
                     'model':'models/bodys/body7.glb'
                 },
                 'sweatshirt6':{
-                    "name":"sweatshirt",
+                    "name":"sweatshirt6",
                     'model':'models/bodys/body8.glb'
                 },
             },
@@ -65,28 +65,28 @@ const state = proxy({
                     'model':'models/legs/leg1.glb'
                 },
                 'pants2':{
-                    "name":"pants",
+                    "name":"pants2",
                     'model':'models/legs/leg2.glb'
                 },
                 'pants3':{
-                    "name":"pants",
+                    "name":"pants3",
                     'model':'models/legs/leg3.glb'
                 },
                 'pants4':{
-                    "name":"pants",
+                    "name":"pants4",
                     'model':'models/legs/leg4.glb'
                 },
                 'pants5':{
-                    "name":"pants2",
+                    "name":"pants5",
                     'model':'models/legs/leg5.glb'
                 },
                 'pants6':{
-                    "name":"pants2",
+                    "name":"pants6",
                     'model':'models/legs/leg6.glb'
                 },
             },
             shoe:{
-                'shoe1':{
+                '9dhwjbbdsa':{
                     "name":"shoe1",
                     'model':'models/shoe/shoe1.glb'
                 },
@@ -122,7 +122,7 @@ const state = proxy({
                     'model':'models/skin/skin2.glb'
                 },
                 'skin3':{
-                    "name":"skin4",
+                    "name":"skin3",
                     'model':'models/skin/skin4.glb'
                 }
         
