@@ -23,6 +23,10 @@ export const PublishCharacter = payload => {
   return api.post('publishcharacter', {payload}).then(res => res.data)
 }
 
+export const getAllDataOfClass = payload => {
+  return api.post('getclass', {payload}).then(res => res.data)
+}
+
 
 
 

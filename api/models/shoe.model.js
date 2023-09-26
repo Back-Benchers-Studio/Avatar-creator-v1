@@ -5,8 +5,8 @@ const shoeSchema = new Schema({
     name: {
         type: String,
         required: true
-    },    
-    UID: {
+    },
+    model:{
         type: String,
         required: true
     }

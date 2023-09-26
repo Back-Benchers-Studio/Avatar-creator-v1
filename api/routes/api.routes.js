@@ -7,6 +7,7 @@ const {
     SaveModel,
     GetAllModelsOfClass,
     GetModelDataByID,
+    getAllDataOfClass
 
 } = require('../controllers/drive.controller')
 
@@ -15,12 +16,14 @@ const{
     GetCharacterByID,
 } = require('../controllers/character.controller')
 
-
+router.post('/api/savemodel', SaveModel)
 // router.post('/api/savemodel', SaveModel)
 router.post('/api/getclassmodels', GetAllModelsOfClass)
 router.post('/api/getmodel', GetModelDataByID)
 router.post('/api/publishcharacter', PublishCharacter)
 router.post('/api/character/', GetCharacterByID)
+router.post('/api/getclass/', getAllDataOfClass)
+
 
 
 

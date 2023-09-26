@@ -9,17 +9,36 @@ import { Billboard ,Text} from '@react-three/drei'
 import { ResizableBox } from 'react-resizable'
 import { PresentationControls } from '@react-three/drei'
 import { GetCharacterByID } from '../services/services'
-import {SaveModel,PublishCharacter,GetModelDataByID} from '../services/services'
+import {SaveModel,PublishCharacter,GetModelDataByID,getAllDataOfClass} from '../services/services'
 import { Popup } from './popup'
 let SideBar = (props)=>{
 let [type,setType] = useState('face')
 let snap = useSnapshot(state)
 const [open, setOpen] = useState(false);
 const [text,setText] = useState('')
+let file = null;
+let Filetype = 'bodys';
+let skin = 'skin2';
+
+let faceData = {};
 useEffect(()=>{
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
     const character = urlParams.get('character')
+
+    getAllDataOfClass({"classname":"face"}).then(res=>{
+        faceData = res.data;
+
+        console.log(faceData);
+        let faceobj = {
+            [`${faceData[0].name}`]:{'name':faceData[0].name,'model':faceData[0].model}
+        }
+        console.log(faceobj);
+        state.items['face']=faceobj;
+        console.log(state);
+
+    })
+
     if(character){
       // We should update UI here
        GetCharacterByID({"id":character}).then((res)=>{
@@ -31,12 +50,69 @@ useEffect(()=>{
 
       })
     }
+
+        
+
+
   },[])
     return(
         <>   
         {
             open&&<Popup closePopup={()=>setOpen(false)} title={'take your link'} text={text}/>
         }
+
+  <div class="form-group">
+    <input type="file" onChange={(e)=>{
+            file = e.target.files[0]
+
+    }} class="form-control-file" name="uploaded_file"/>
+    <button onClick={()=>{
+        console.log(file);
+    if (file) {
+    const reader = new FileReader();
+    reader.onload = function (e) {
+        const fileContent = e.target.result;    
+        let data = {
+            "name":file.name,
+            "skin": Filetype==="face"?skin:null,
+            "type":Filetype,
+            "file":fileContent
+        }
+        SaveModel(data).then((res)=>{
+
+        });
+      };
+
+      reader.readAsDataURL(file);;
+        }
+
+    }}>upload model</button>      
+  </div>
+
+  <select onChange={(e)=>{
+        Filetype = e.target.value;
+  }} id="type" name="type">
+  <option selected value="bodys">bodys</option>
+  <option value="face">face</option>
+  <option value="legs">legs</option>
+  <option value="shoe">shoe</option>
+  <option value="skin">skin</option>
+</select>
+
+<select onChange={(e)=>{
+        Filetype = e.target.value;
+  }} id="skin" name="skin">
+
+{
+Object.keys(faceData).map((key, index) => {
+        return(
+            <option value={key['name']}>{key['name']}</option>
+        )
+    })
+    }
+</select>
+
+
         <div className='cont'>
         <div class="side-right" >
             <div class="con-right">

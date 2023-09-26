@@ -10,8 +10,7 @@ const faceSchema = new Schema({
         type: String,
         required: true
     },
-    
-    UID: {
+    model:{
         type: String,
         required: true
     }

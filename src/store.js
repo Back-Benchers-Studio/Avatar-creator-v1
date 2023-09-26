@@ -2,31 +2,10 @@ import { proxy } from 'valtio'
 const state = proxy({
         items:{
             face:{
-                'face1':{
-                    'skin':'skin3',
-                    "name":"face1",
-                    "model":'models/face/face1.glb',
-                },
-                'face2':{
-                    'skin':'skin1',
-                    "name":"face2",
-                    "model":'models/face/face2.glb',
-                },
-                'face3':{
-                    'skin':'skin2',
-                    "name":"face3",
-                    "model":'models/face/face3.glb',
-                },
-                'face4':{
-                    "skin":"skin3",
-                    "name":"face4",
-                    "model":'models/face/face5.glb',
-                },
-                'face6':{
-                    'skin':'skin3',
-                    "name":"face6",
-                    "model":'models/face/face6.glb',
-                },
+                "face3": {
+                    "name": "face3",
+                    "model": "models/face/face3.glb"
+                }
                 
             },
             body:{
@@ -133,7 +112,7 @@ const state = proxy({
 
 
 let currentState = proxy({
-    face:state.items.face["face1"],
+    face:state.items.face["face3"],
     body:state.items.body['sweatshirt'],
     legs:state.items.legs['pants1'],
     shoe:state.items.shoe['shoe6'],

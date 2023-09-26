@@ -3,8 +3,10 @@ const ShoeModel = require('../models/shoe.model.js')
 const FaceModel = require('../models/face.model.js')
 const LegsModel = require('../models/legs.model.js')
 const SkinModel = require('../models/skin.model.js')
+
 const { google } = require("googleapis");
 const fs = require('fs');
+const path = require('path')
 
 
 const SCOPES = ["https://www.googleapis.com/auth/drive"];
@@ -29,18 +31,166 @@ const drive = google.drive({ version: 'v3', auth });
 
 
 exports.SaveModel = async (req, res) => {
+      let filePath = '';
+      filePath = path.join(__dirname,"..","..","public","models",req.body.payload.type,req.body.payload.name);
+      let base64Data = req.body.payload.file.replace(/^data:application\/octet-stream;base64,/, "");
+      fs.writeFile(filePath, base64Data, 'base64', function(err) {
 
+      });    
+      if(req.body.payload.type == 'face'){
+        const facemodel = new FaceModel({
+          name: removeExtension(req.body.payload.name),
+          model: `models/${req.body.payload.type}/${req.body.payload.name}`,
+          skin: req.body.payload.skin
+        })
+        facemodel.save().then(data => {
+          return res.status(200).send({
+              message: "Model published successfully!",
+          })
+        }).catch(err => {
+          return res.status(500).send({
+              message: err.message
+          })
+        })
+      }else
+        if(req.body.payload.type == 'bodys'){
+          const bodymodel = new BodyModel({
+            name: removeExtension(req.body.payload.name),
+            model: `models/${req.body.payload.type}/${req.body.payload.name}`,
+          })
+          bodymodel.save().then(data => {
+            return res.status(200).send({
+                message: "Model published successfully!",
+            })
+          }).catch(err => {
+            return res.status(500).send({
+                message: err.message
+            })
+          })
+      } else
+      if(req.body.payload.type == 'legs'){
+        const legsmodel = new LegsModel({
+          name: removeExtension(req.body.payload.name),
+          model: `models/${req.body.payload.type}/${req.body.payload.name}`,
+        })
+        legsmodel.save().then(data => {
+          return res.status(200).send({
+              message: "Model published successfully!",
+          })
+        }).catch(err => {
+          return res.status(500).send({
+              message: err.message
+          })
+        })
+      } else
+      if(req.body.payload.type == 'shoe'){
+        const shoemodel = new ShoeModel({
+          name: removeExtension(req.body.payload.name),
+          model: `models/${req.body.payload.type}/${req.body.payload.name}`,
+        })
+        shoemodel.save().then(data => {
+          return res.status(200).send({
+              message: "Model published successfully!",
+          })
+        }).catch(err => {
+          return res.status(500).send({
+              message: err.message
+          })
+        })
+      } else 
+      if(req.body.payload.type == 'skin'){
+        const skinModel = new SkinModel({
+          name: removeExtension(req.body.payload.name),
+          model: `models/${req.body.payload.type}/${req.body.payload.name}`,
+        })
+        skinModel.save().then(data => {
+          return res.status(200).send({
+              message: "Model published successfully!",
+          })
+        }).catch(err => {
+          return res.status(500).send({
+              message: err.message
+          })
+        })}else{
+          return res.status(500).send({
+            message: "Error happened while saving to database"
+        })
+        }
+}
 
+exports.getAllDataOfClass = async (req, res) => {
+  if(req.body.payload.classname == 'face'){
+    FaceModel.find({}).then(data => {
+      return res.status(200).send({
+          message: "Faces fetched successfully!",
+          data: data
+      })
+    }).catch(err => {
+      return res.status(500).send({
+          message: err.message
+      })
+    })
+  }else if(req.body.payload.classname == 'bodys'){
+    BodyModel.find({}).then(data => {
+      return res.status(200).send({
+          message: "Bodys fetched successfully!",
+          data: data
+      })
+    }).catch(err => {
+      return res.status(500).send({
+          message: err.message
+      })
+    })
+  }else if(req.body.payload.classname == 'legs'){
+    LegsModel.find({}).then(data => {
+      return res.status(200).send({
+          message: "Legs fetched successfully!",
+          data: data
+      })
+    }).catch(err => {
+      return res.status(500).send({
+          message: err.message
+      })
+    })
+  }else if(req.body.payload.classname == 'shoe'){
+    ShoeModel.find({}).then(data => {
+      return res.status(200).send({
+          message: "Shoes fetched successfully!",
+          data: data
+      })
+    }).catch(err => {
+      return res.status(500).send({
+        message: err.message
+      })
+    })
+  }else if(req.body.payload.classname == 'skin')
+    {
+  SkinModel.find({}).then(data => {
+    return res.status(200).send({
+        message: "Skins fetched successfully!",
+        data: data
+    })
+  }).catch(err => {
+    return res.status(500).send({
+        message: err.message
+    })
+  })
+    }else{
+      return res.status(500).send({
+        message: "Class not found"
+    })
+    }
 
 
 }
+
 
 exports.GetAllModelsOfClass = async (req, res) => {
 
     try{
         const AvaliableClasses = ['bodys','face','legs','shoe','skin'];
     
-        console.log(req.body.payload.classname)
+        // console.log(req.body.payload.classname)
         if(!(AvaliableClasses.includes(req.body.payload.classname)))
         {
             return res.status(400).send({
@@ -82,56 +232,57 @@ exports.GetAllModelsOfClass = async (req, res) => {
 
 
 
-// exports.GetModelDataByID = async (req, res) => {
-    
-//     try{
-//         const filePath = `/tmp/xzd.glb`;
-//         // const dest = fs.createWriteStream(Data);
-//         fileId = req.body.payload.modelid;
-//         let Data = [];
-//         drive.files.get(
-//           { fileId, alt: 'media' },
-//           { responseType: 'stream' }
-//         ).then(driveres => {
-//           driveres.data
-//             .on('end', () => {
-//                 return res.status(200).send({
-//                     error: false,
-//                     ModelData: Data
-//                 });
-//             })  
-//             .on('error', err => {
-//               return res.status(500).send({
-//                 error: true,
-//                 message: err.message
-//             });
-//             })  
-//             .on('data', d => {
-//                 Data.push(d);         
-//             });  
-//         }); 
-//     }catch(err){
-//         return res.status(500).send({
-//             error: true,
-//             message: err.message
-//         });
-//     }
-
-// }
-
-
-
-
 exports.GetModelDataByID = async (req, res) => {
-    const filePath = '/tmp/xzd.glb';
-
-    fs.readFile(filePath, (err, data) => {
-      if (err) {
-        console.error(err);
-        res.status(500).send('Error reading file');
-      } else {
-        res.download(filePath);
-      }
-    });
+    try{
+        fileId = req.body.payload.modelid;
+        let data = [];
+        drive.files.get(
+          { fileId: fileId,
+            alt: 'media' },
+          { responseType: 'stream' }
+        ).then(driveres => {
+          driveres.data
+            .on('end', () => {
+                const buffer = Buffer.concat(data);
+                const base64Data = buffer.toString('base64');
+                return res.end(base64Data);
+            })  
+            .on('error', err => {
+              return res.status(500).send({
+                error: true,
+                message: err.message
+            });
+            })  
+            .on('data', d => {
+                data.push(d);
+            });  
+        }); 
+    }catch(err){
+        return res.status(500).send({
+            error: true,
+            message: err.message
+        });
+    }
 
 }
+
+function removeExtension(filename){
+    var lastDotPosition = filename.lastIndexOf(".");
+    if (lastDotPosition === -1) return filename;
+    else return filename.substr(0, lastDotPosition);
+}
+
+
+// exports.GetModelDataByID = async (req, res) => {
+//     const filePath = '/tmp/xzd.glb';
+
+//     fs.readFile(filePath,{encoding: 'base64'}, (err, data) => {
+//       if (err) {
+//         console.error(err);
+//         res.status(500).send('Error reading file');
+//       } else {
+//         res.end(data);
+//       }
+//     });
+
+// }
