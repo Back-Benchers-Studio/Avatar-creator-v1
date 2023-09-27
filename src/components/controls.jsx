@@ -21,6 +21,12 @@ let Filetype = 'bodys';
 let skin = 'skin2';
 
 let faceData = {};
+let bodyData = {};
+let legsData = {};
+let shoeData = {};
+let skinData = {};
+
+
 useEffect(()=>{
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
@@ -29,15 +35,59 @@ useEffect(()=>{
     getAllDataOfClass({"classname":"face"}).then(res=>{
         faceData = res.data;
 
-        console.log(faceData);
-        let faceobj = {
-            [`${faceData[0].name}`]:{'name':faceData[0].name,'model':faceData[0].model}
+        let faceobj = {}
+        for(let i=0;i<faceData.length;i++){
+            faceobj[`${faceData[i].name}`] = {skin:faceData[i].skin,'name':faceData[i].name,'model':faceData[i].model}
         }
         console.log(faceobj);
         state.items['face']=faceobj;
-        console.log(state);
+       
 
     })
+    
+    getAllDataOfClass({"classname":"bodys"}).then(res=>{
+        bodyData = res.data;
+        let bodyobj = {}
+        for(let i=0;i<bodyData.length;i++){
+            bodyobj[`${bodyData[i].name}`] = {'name':bodyData[i].name,'model':bodyData[i].model}
+        }
+        console.log(bodyobj);
+        state.items['body']=bodyobj;
+    })
+
+    getAllDataOfClass({"classname":"legs"}).then(res=>{
+        legsData = res.data;
+        let legsobj = {}
+        for(let i=0;i<legsData.length;i++){
+            legsobj[`${legsData[i].name}`] = {'name':legsData[i].name,'model':legsData[i].model}
+        }
+        console.log(legsobj);
+        state.items['legs']=legsobj;
+    })
+
+    getAllDataOfClass({"classname":"shoe"}).then(res=>{
+        shoeData = res.data;
+        let shoeobj = {}
+        for(let i=0;i<shoeData.length;i++){
+            shoeobj[`${shoeData[i].name}`] = {'name':shoeData[i].name,'model':shoeData[i].model}
+        }
+        console.log(shoeobj);
+        state.items['shoe']=shoeobj;
+    })
+
+    getAllDataOfClass({"classname":"skin"}).then(res=>{
+        skinData = res.data;
+        let skinobj = {}
+        for(let i=0;i<skinData.length;i++){
+            skinobj[`${skinData[i].name}`] = {'name':skinData[i].name,'model':skinData[i].model}
+        }
+        console.log(skinobj);
+        state.items['skin']=skinobj;
+    })
+
+    
+    
+
 
     if(character){
       // We should update UI here
