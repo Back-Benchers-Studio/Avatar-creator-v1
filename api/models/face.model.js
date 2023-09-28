@@ -4,7 +4,8 @@ const Schema = mongoose.Schema
 const faceSchema = new Schema({
     name: {
         type: String,
-        required: true
+        required: true,
+        unique: true,
     },
     skin:{
         type: String,
@@ -12,7 +13,8 @@ const faceSchema = new Schema({
     },
     model:{
         type: String,
-        required: true
+        required: true,
+        unique: true,
     }
     
 },{ timestamps: true });

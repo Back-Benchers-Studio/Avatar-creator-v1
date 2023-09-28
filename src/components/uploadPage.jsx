@@ -1,6 +1,9 @@
-import { useEffect, useState } from "react"
+import { useEffect, useState,Suspense,useRef } from "react"
 import {Popup} from './popup'
 import {SaveModel,getAllDataOfClass} from '../services/services'
+import { Canvas } from "@react-three/fiber"
+import { useFrame } from "@react-three/fiber"
+import { Gltf } from "@react-three/drei"
 let style = `
 
 .upload-container {
@@ -10,6 +13,7 @@ let style = `
     display: flex;
     justify-content: center;
     background-color: #fcfcfc;
+    flex-direction:column;
   }
   .upload-container select{
     border: 2px black solid;
@@ -41,7 +45,11 @@ let style = `
     border: 3px dotted #a3a3a3;
     border-radius: 5px;
   }
-  
+@media(max-width:768px) {
+    .card{
+        width:80%;
+    }
+}
   .drop_box h4 {
     font-size: 16px;
     font-weight: 400;
@@ -83,6 +91,7 @@ let style = `
     border-radius: 4px;
   }
   `
+ 
   
 let Upload = ()=>{
     let [file,setFile] = useState(null);
@@ -90,6 +99,8 @@ let Upload = ()=>{
     let [skin,setSkin] = useState('skin2');
     let [open,setOpen] = useState(false)
     let [err,setErr] = useState(false)
+    let [msg,setMsg] = useState('')
+
     let [done,setDone] = useState(false)
     let [fileName,setFileName] = useState('')
     let [passcode,setPasscode] = useState('')
@@ -112,7 +123,7 @@ let Upload = ()=>{
         const dropArea = document.querySelector(".drop_box"),
         button = dropArea.querySelector("button"),
         input = dropArea.querySelector("input");
-        button.onclick = () => {
+        button.onclick = (e) => {
         input.click();
         };
         input.addEventListener("change", function (e){
@@ -120,15 +131,18 @@ let Upload = ()=>{
             setFile(e.target.files[0])
             setFileName(e.target.files[0].name)
             });
-    },[open])
+    },[])
     return(<>
     {
-        err&& <Popup closePopup={()=>setErr(false)} title={'ERROR'} text={'Wrong passcode'}/>
+        err&& <Popup closePopup={()=>setErr(false)} title={'ERROR'} text={msg}/>
     }
     {
         done&& <Popup closePopup={()=>setDone(false)} title={'Done!'} text={'File uploaded'}/>
     }
          <div class="upload-container">
+         <div className="viwer">
+                {file&&<SmallCanvas file={file} item={filetype}/>}
+            </div>
         <div class="card">
         <h3>Upload Files</h3>
         <div class="drop_box">
@@ -159,10 +173,10 @@ let Upload = ()=>{
                 <h4>{fileName}</h4>
                 <input type="text" onChange={(e)=>setPasscode(e.target.value)} placeholder="Enter passcode to upload file"/>
                 <button class="btn" onClick={()=>{
-                     if(passcode !== '1234'){
-                      setErr(true)
-                      return
-                     }
+                    //  if(passcode !== '1234'){
+                    //   setErr(true)
+                    //   return
+                    //  }
                     if (file && !err) {
                         const reader = new FileReader();
                         reader.onload = function (e) {
@@ -171,10 +185,20 @@ let Upload = ()=>{
                                 "name":file.name,
                                 "skin": filetype==="face"?skin:null,
                                 "type":filetype,
-                                "file":fileContent
+                                "file":fileContent,
+                                "passcode":passcode
                             }
                             SaveModel(data).then((res)=>{
-                                setDone(true)
+                              setDone(true)
+                              // console.log(res);
+                              // if(res.error === true){
+                                
+                              //   setMsg(res.message)
+                              //   setErr(true)
+                                
+                              // }else{
+                              // }
+
                                 // setOpen(false)
                             });
                            
@@ -202,5 +226,53 @@ let Upload = ()=>{
 <style>{style}</style>
 </>)
 }
-
+let SmallCanvas = (props)=>{
+    let [position,setPosition] = useState([0,0,0])
+    let [loaded,setLoaded] = useState(false)
+    let [url,setUrl] = useState(undefined)
+    useEffect(()=>{
+        console.log(loaded)
+        if(props.item === 'shoe')
+        setPosition([0,0,3])
+        else if(props.item === 'bodys')
+        setPosition([0,-1.2,3])
+        else if(props.item === 'face')
+        setPosition([0,-1.7,4])
+        else if(props.item === 'legs')
+        setPosition([0,-1,2])
+    },[props,loaded])
+     function previewFile() {
+                const file =props.file;
+                const reader = new FileReader();
+                reader.addEventListener("load", function () {
+                    setUrl(reader.result)
+                }, false);
+                 reader.readAsDataURL(file)
+              }
+              previewFile()
+    return(
+        <>
+        
+            <Canvas style={{width:"30vw",height:'30vh'}} camera={{fov: 30 }}>
+                <Suspense>
+                    <ambientLight intensity={0.2}></ambientLight>
+                    <pointLight position={[0,5,6]}></pointLight>
+                  {url&&<Model snap={props.snap} position={position} item={props.item} model={url}/>}
+                </Suspense>
+            </Canvas>
+        </>
+    )
+}
+let Model = (props)=>{
+    const modelRef = useRef();
+    const rotateModel = () => {
+      modelRef.current.rotation.y += 0.01;
+    };
+  
+    useFrame(() => {
+      rotateModel();
+    });
+    return <Gltf ref={modelRef} rotation={[props.item === 'shoe'?0.2:0,props.item === 'shoe'?0.7:-0.3,0]} position={props.position} src={props.model}></Gltf>
+     
+}
 export default Upload

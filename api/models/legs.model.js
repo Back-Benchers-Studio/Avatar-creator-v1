@@ -4,11 +4,13 @@ const Schema = mongoose.Schema
 const legsSchema = new Schema({
     name: {
         type: String,
-        required: true
+        required: true,
+        unique: true,
     },
     model:{
         type: String,
-        required: true
+        required: true,
+        unique: true,
     }
     
 },{ timestamps: true });
