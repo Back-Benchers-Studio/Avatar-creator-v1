@@ -96,11 +96,10 @@ let style = `
 let Upload = ()=>{
     let [file,setFile] = useState(null);
     let [filetype,setFiletype] = useState('face');
-    let [skin,setSkin] = useState('skin2');
+    let [skin,setSkin] = useState('');
     let [open,setOpen] = useState(false)
     let [err,setErr] = useState(false)
     let [msg,setMsg] = useState('')
-
     let [done,setDone] = useState(false)
     let [fileName,setFileName] = useState('')
     let [passcode,setPasscode] = useState('')
@@ -112,6 +111,8 @@ let Upload = ()=>{
             let currentSkinobj = {}
             for(let i=0;i<skinData.length;i++){
                 currentSkinobj[`${skinData[i].name}`] = {'name':skinData[i].name,'model':skinData[i].model}
+                if(i===0)
+                  setSkin(skinData[i].name)
             }
             setSkinObj(currentSkinobj)
         })
@@ -119,19 +120,6 @@ let Upload = ()=>{
     useEffect(()=>{
         setSkinOption(filetype === 'face')
     },[filetype])
-    useEffect(()=>{
-        const dropArea = document.querySelector(".drop_box"),
-        button = dropArea.querySelector("button"),
-        input = dropArea.querySelector("input");
-        button.onclick = (e) => {
-        input.click();
-        };
-        input.addEventListener("change", function (e){
-            console.log(file)
-            setFile(e.target.files[0])
-            setFileName(e.target.files[0].name)
-            });
-    },[])
     return(<>
     {
         err&& <Popup closePopup={()=>setErr(false)} title={'ERROR'} text={msg}/>
@@ -162,7 +150,7 @@ let Upload = ()=>{
                 onChange={(e)=>setSkin(e.target.value)}>
                     {
                          Object.keys(skinobj).map((key, index) => (
-                             <option value={skinobj[key].name}>{skinobj[key].name}</option>
+                             <option selected={index === 0 ? 'selected' : ''} value={skinobj[key].name}>{skinobj[key].name}</option>
                         ))
                     }
                 </select>
@@ -171,7 +159,7 @@ let Upload = ()=>{
             {
                 open&&<div class="form" style={{position:'relative'}}>
                 <h4>{fileName}</h4>
-                <input type="text" onChange={(e)=>setPasscode(e.target.value)} placeholder="Enter passcode to upload file"/>
+                <input type="password" onChange={(e)=>setPasscode(e.target.value)} placeholder="Enter passcode to upload file"/>
                 <button class="btn" onClick={()=>{
                     //  if(passcode !== '1234'){
                     //   setErr(true)
@@ -180,7 +168,14 @@ let Upload = ()=>{
                     if (file && !err) {
                         const reader = new FileReader();
                         reader.onload = function (e) {
-                            const fileContent = e.target.result;    
+                            const fileContent = e.target.result;
+
+                          if(filetype === 'skin' && skin === '') {
+                            setErr(true)
+                            setMsg('Please select skin')
+                            return
+                          }
+
                             let data = {
                                 "name":file.name,
                                 "skin": filetype==="face"?skin:null,
@@ -189,18 +184,12 @@ let Upload = ()=>{
                                 "passcode":passcode
                             }
                             SaveModel(data).then((res)=>{
-                              setDone(true)
-                              // console.log(res);
-                              // if(res.error === true){
-                                
-                              //   setMsg(res.message)
-                              //   setErr(true)
-                                
-                              // }else{
-                              // }
-
+                                setDone(true)
                                 // setOpen(false)
-                            });
+                            }).catch(err=>{
+                                setErr(true)
+                                setMsg(err.response.data.message);
+                            })
                            
                           };
                     
@@ -216,8 +205,18 @@ let Upload = ()=>{
                 <h4>Select File here</h4>
             </header>
             <p>Files Supported: .GLB,.GLTF</p>
-            <input type="file" onChange={()=>setOpen(true)} hidden accept=".glb,.gltf" id="fileID"/>
-            <button class="btn">Choose File</button>
+            <input type="file" onChange={(e)=>{
+              setOpen(true)
+              setFile(e.target.files[0])
+              setFileName(e.target.files[0].name)
+              
+            }} hidden accept=".glb,.gltf" id="fileID"/>
+            <button onClick={(e)=>{
+              const dropArea = document.querySelector(".drop_box");
+              let input = dropArea.querySelector("input");
+              input.click();
+
+            }} class="btn">Choose File</button>
             </>
             }
     </div>

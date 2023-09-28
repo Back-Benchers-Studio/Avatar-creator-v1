@@ -9,6 +9,7 @@ const fs = require('fs');
 const path = require('path')
 
 exports.SaveModel = async (req, res) => {
+    try{
     if(!req.body.payload.passcode){
       return res.status(200).send({
         error: true,
@@ -18,113 +19,91 @@ exports.SaveModel = async (req, res) => {
 
     let passcodeMongo = await passcodeModel.findOne({passcode:req.body.payload.passcode});
     if(!passcodeMongo){
-      return res.status(200).send({
+      return res.status(400).send({
         error:true,
         message: "Passcode not found",
     })
     }
       if(!(req.body.payload.name.endsWith('.glb')||req.body.payload.name.endsWith('.gltf'))){
-        return res.status(200).send({
+        return res.status(400).send({
           error:true,
           message: "File extension not supported",
       })
-      }
-      let filePath = '';
-      filePath = path.join(__dirname,"..","..","public","models",req.body.payload.type,req.body.payload.name);
-      let base64Data = req.body.payload.file.replace(/^data:application\/octet-stream;base64,/, "");
-      fs.writeFile(filePath, base64Data, 'base64', function(err) {
-
-      });    
+      }   
+      let filePublicPath = path.join(__dirname,"..","..","public","models",req.body.payload.type,req.body.payload.name);
+      let fileBuildPath = path.join(__dirname,"..","..","build","models",req.body.payload.type,req.body.payload.name);
+      let base64Data = req.body.payload.file.replace(/^data:application\/octet-stream;base64,/, ""); 
       if(req.body.payload.type == 'face'){
         const facemodel = new FaceModel({
           name: removeExtension(req.body.payload.name),
           model: `models/${req.body.payload.type}/${req.body.payload.name}`,
           skin: req.body.payload.skin
         })
-        facemodel.save().then(data => {
-          return res.status(200).send({
-          error:false,
-              message: "Model published successfully!",
-          })
-        }).catch(err => {
-          return res.status(200).send({
-            error:true,
-              message: err.code===11000?"Duplicated Entity": err.message
-          })
-        })
+        await facemodel.save();
       }else
         if(req.body.payload.type == 'bodys'){
           const bodymodel = new BodyModel({
             name: removeExtension(req.body.payload.name),
             model: `models/${req.body.payload.type}/${req.body.payload.name}`,
           })
-          bodymodel.save().then(data => {
-            return res.status(200).send({
-              error:false,
-                message: "Model published successfully!",
-            })
-          }).catch(err => {
-            return res.status(200).send({
-              error:true,
-                message: err.code===11000?"Duplicated Entity": err.message
-            })
-          })
+          await bodymodel.save();
       } else
       if(req.body.payload.type == 'legs'){
         const legsmodel = new LegsModel({
           name: removeExtension(req.body.payload.name),
           model: `models/${req.body.payload.type}/${req.body.payload.name}`,
         })
-        legsmodel.save().then(data => {
-          return res.status(200).send({
-            error:false,
-              message: "Model published successfully!",
-          })
-        }).catch(err => {
-          return res.status(200).send({
-            error:true,
-              message: err.code===11000?"Duplicated Entity": err.message
-          })
-        })
+        await legsmodel.save();
       } else
       if(req.body.payload.type == 'shoe'){
         const shoemodel = new ShoeModel({
           name: removeExtension(req.body.payload.name),
           model: `models/${req.body.payload.type}/${req.body.payload.name}`,
         })
-        shoemodel.save().then(data => {
-          return res.status(200).send({
-            error:false,
-              message: "Model published successfully!",
-          })
-        }).catch(err => {
-          return res.status(200).send({
-            error:true,
-              message: err.code===11000?"Duplicated Entity": err.message
-          })
-        })
+        await shoemodel.save();
       } else 
       if(req.body.payload.type == 'skin'){
         const skinModel = new SkinModel({
           name: removeExtension(req.body.payload.name),
           model: `models/${req.body.payload.type}/${req.body.payload.name}`,
         })
-        skinModel.save().then(data => {
-          return res.status(200).send({
-            error:false,
-              message: "Model published successfully!",
-          })
-        }).catch(err => {
-          return res.status(200).send({
-            error:true,
-              message: err.code===11000?"Duplicated Entity": err.message
-          })
-        })}else{
-          return res.status(200).send({
+        await skinModel.save();
+      }else{
+          return res.status(400).send({
             error:true,
             message: "Error happened while saving to database"
         })
+      }
+
+      fs.writeFile(filePublicPath, base64Data, 'base64', function(err) {
+        if(err){
+          return res.status(400).send({
+            error:true,
+            message: err.message
+          })
         }
+    }); 
+    fs.writeFile(fileBuildPath, base64Data, 'base64', function(err) {
+      if(err){
+        return res.status(400).send({
+          error:true,
+          message: err.message
+        })
+      }
+  }); 
+    return res.status(200).send({
+      error:false,
+      message: "Model saved successfully!"
+      })
+  
+    }catch(err){
+      return res.status(400).send({
+        error:true,
+          message: err.code===11000?"Duplicated Entity": err.message
+      })
+    }
+
+
 }
 
 exports.getAllDataOfClass = async (req, res) => {
@@ -189,8 +168,6 @@ exports.getAllDataOfClass = async (req, res) => {
         message: "Class not found"
     })
     }
-
-
 }
 
 function removeExtension(filename){

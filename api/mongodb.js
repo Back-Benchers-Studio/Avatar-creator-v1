@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
 mongoose
-  .connect("mongodb+srv://backbenchersteam23:cZMciniOgAaEU45q@cluster0.q4aihf4.mongodb.net/Avatar?retryWrites=true&w=majority", {
+  .connect("mongodb+srv://metachronical:Nz8eP3FU2Fqo9S5X@cluster0.bbxyuhe.mongodb.net/Avatar?retryWrites=true&w=majority&appName=AtlasApp", {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   })
