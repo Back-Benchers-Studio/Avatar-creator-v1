@@ -29,9 +29,9 @@ const state = proxy({
                 
             },
             skin:{
-                'skin3':{
-                    "name":"skin3",
-                    'model':'models/skin/skin3.glb'
+                'skin2':{
+                    "name":"skin2",
+                    'model':'models/skin/skin2.glb'
                 }
         
             }
@@ -47,7 +47,7 @@ let currentState = proxy({
     body:state.items.body['body1'],
     legs:state.items.legs['leg1'],
     shoe:state.items.shoe['shoe1'],
-    skin:state.items.skin['skin3'],
+    skin:state.items.skin['skin2'],
 })
 
 export { state,currentState,ModelUrl }
