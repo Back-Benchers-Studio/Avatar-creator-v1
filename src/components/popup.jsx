@@ -17,8 +17,8 @@ export const Popup = ({ title,text, closePopup,copy = true }) => {
                 {
             text&&<span>{text}</span>
         }
-      <button style={{position:'absolute',bottom:'-12px',right:"1%"}} onClick={closePopup}>Close</button>
-      <button style={{position:'absolute',bottom:'-12px',left:"1%"}} onClick={()=>{copyToClipboard();setCopyed(true)}}>{copyed?<BiCheckDouble/>:<BiCopy/>}</button>
+      <button style={{position:'absolute',bottom:'10px',right:"3%"}} onClick={closePopup}>Close</button>
+      <button style={{position:'absolute',bottom:'10px',left:"3%"}} onClick={()=>{copyToClipboard();setCopyed(true)}}>{copyed?<BiCheckDouble/>:<BiCopy/>}</button>
 
      </div>
     </div>

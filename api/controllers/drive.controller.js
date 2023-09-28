@@ -31,6 +31,11 @@ const drive = google.drive({ version: 'v3', auth });
 
 
 exports.SaveModel = async (req, res) => {
+      if(!(req.body.payload.name.endsWith('.glb')||req.body.payload.name.endsWith('.gltf'))){
+        return res.status(200).send({
+          message: "Error",
+      })
+      }
       let filePath = '';
       filePath = path.join(__dirname,"..","..","public","models",req.body.payload.type,req.body.payload.name);
       let base64Data = req.body.payload.file.replace(/^data:application\/octet-stream;base64,/, "");

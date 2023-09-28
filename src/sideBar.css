@@ -1,4 +1,7 @@
 
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+
 
 :root {
     --icon-color:#5a5c79;
@@ -36,6 +39,7 @@
     z-index: 3;
     overflow-x: hidden;
     overflow-y: auto;
+    
 }
 
 .side-right .con-right {
@@ -193,7 +197,18 @@
     }
 }
 
-
+.loadingScreen{
+    height: 100%;
+    width: 100%;
+    background: black;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 38px;
+    flex-direction: column;
+    gap: 20px;
+}
 /* small-media */
 @media(max-width:768px) {
     .side-right {
@@ -274,4 +289,3 @@
             width: 55px;
         }
 }
-

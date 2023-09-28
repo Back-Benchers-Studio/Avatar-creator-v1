@@ -13,7 +13,7 @@ const state = proxy({
                 //     "model":'models/face/face2.glb',
                 // },
                 // 'face3':{
-                //     'skin':'skin2',
+                //     'skin':'skin3',
                 //     "name":"face3",
                 //     "model":'models/face/face3.glb',
                 // },
@@ -130,7 +130,9 @@ const state = proxy({
         }
 })
 
-
+let ModelUrl = proxy({
+    link:'m'
+})
 
 let currentState = proxy({
     face:state.items.face["face3"],
@@ -140,4 +142,4 @@ let currentState = proxy({
     skin:state.items.skin['skin2'],
 })
 
-export { state,currentState }
+export { state,currentState,ModelUrl }
